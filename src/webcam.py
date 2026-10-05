@@ -286,6 +286,10 @@ class RealTimeSyncNet:
         self.device = torch.device("cpu")  
         self.s = SyncNetInstance(dropout=0, num_layers_in_fc_layers=1024, device="cpu")
         self.s.loadParameters(cfg.initial_model)
+        ft = SYNCNET_REPO.parent / "syncnet_finetuned_final.pth"
+        if ft.exists():
+            self.s.load_state_dict(torch.load(ft, map_location="cpu"), strict=False)
+            print("Loaded fine-tuned SyncNet:", ft)
 
         for name, obj in vars(self.s).items():
             if isinstance(obj, torch.nn.Module):
@@ -413,7 +417,8 @@ def main():
             return RiskState.YELLOW
         return RiskState.RED
 
-    cap = cv2.VideoCapture("input_25fps.mp4")
+    src = os.getenv("GREENLIGHT_SOURCE", "0")
+    cap = cv2.VideoCapture(int(src) if src.isdigit() else src)
     if not cap.isOpened():
         print("웹캠을 열 수 없음")
         return
