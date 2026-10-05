@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pth
+*.model
+*.mp4
+*.wav
+*.zip
+syncnet_data/
+data/
+test_data/
+syncnet_python/
